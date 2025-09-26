@@ -1,33 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const CartSlice = createSlice({
+const initialState = {
+  cart: []
+};
+
+const CartSlice = createSlice({
   name: 'cart',
-  initialState: {
-    items: [], // cart items will be stored here
-  },
+  initialState,
   reducers: {
     addItem: (state, action) => {
-      const item = action.payload;
-      const existingItem = state.items.find((i) => i.name === item.name);
-
-      if (existingItem) {
-        existingItem.quantity += 1; // if product already exists, increase quantity
-      } else {
-        state.items.push({ ...item, quantity: 1 }); // otherwise add new product
+      const existing = state.cart.find(item => item.name === action.payload.name);
+      if (!existing) {
+        state.cart.push({ ...action.payload, quantity: 1 });
       }
     },
     removeItem: (state, action) => {
-      const name = action.payload;
-      state.items = state.items.filter((i) => i.name !== name);
+      state.cart = state.cart.filter(item => item.name !== action.payload.name);
     },
     updateQuantity: (state, action) => {
-      const { name, quantity } = action.payload;
-      const existingItem = state.items.find((i) => i.name === name);
-      if (existingItem) {
-        existingItem.quantity = quantity;
+      const item = state.cart.find(i => i.name === action.payload.name);
+      if (item) {
+        item.quantity = action.payload.quantity;
       }
-    },
-  },
+    }
+  }
 });
 
 export const { addItem, removeItem, updateQuantity } = CartSlice.actions;
